@@ -7,7 +7,7 @@
 3. Перейти в директорию `cd selene_workshop`
 4. Создать виртуальное окружение `python -m venv .venv`
 5. Активировать окружение `source .venv/bin/activate` (mac/linux) `.venv/bin/activate.bat` (win)
-6. Установить зависимости `pip3 install selenium webdriver-manager pytest`
+6. Установить зависимости `pip3 install selenium webdriver-manager`
 
 Готово!
 
