@@ -37,7 +37,11 @@ timeout: int = 4
 
 
 def wait():
-    return WebDriverWait(driver, timeout=timeout, ignored_exceptions=(WebDriverException,))
+    return WebDriverWait(
+        driver,
+        timeout=timeout,
+        ignored_exceptions=(WebDriverException,)
+    )
 
 
 class element_value_is_empty(object):
@@ -97,9 +101,8 @@ class Element:
             except Exception as error:
                 outer_html = original.get_attribute('outerHTML')
                 raise WebDriverException(
-                    msg=f'failed to find inside element by {locate} '
+                    msg=f'failed to find inside {outer_html} '
                         f'the element by: {selector}'
-                        f'\n\noriginal html element: {outer_html}'
                 )
 
         return Element(locate)
