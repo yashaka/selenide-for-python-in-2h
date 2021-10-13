@@ -44,6 +44,16 @@ def wait():
     )
 
 
+# todo: remove redundant driver,
+#       by using higher-order callable object
+#       refactor to something like:
+# class element_value_is_empty(object):
+#
+#     def __call__(self, element):
+#         return element.locate().get_attribute('value') == ''
+#
+#     def __str__(self):
+#         return f'value is empty'
 class element_value_is_empty(object):
     def __init__(self, locate: Callable[[], WebElement]):
         self.locate = locate
@@ -60,10 +70,22 @@ class Element:
         self.locate = locate
 
     def should_be_blank(self) -> Element:
+        # todo: consider passing self instead of self.locate ;)
         wait().until(element_value_is_empty(self.locate))
         return self
 
     def set_value(self, text) -> Element:
+        # todo: log here and on all other commands the context of failure
+        #       where the context is:
+        #       1 what we wanted to call (command description)
+        #       2 for which element? (locate description)
+        #       this might be done in two steps:
+        #       1 catching all errors inside command
+        #         and raising new error with everything logged
+        #       2 DRYing commands from duplication by higher-order function
+        #         (the callable object might be redundant at this stage)
+        #       3 finally, when added logging even passed commands,
+        #         refactor higher-order fn to callable objct with str
         def command(driver):
             webelement = self.locate()
             webelement.clear()
@@ -99,7 +121,17 @@ class Element:
                 webelement = original.find_element(By.CSS_SELECTOR, selector)
                 return webelement
             except Exception as error:
+                # TODO: optimize: render outerHTML only on last try when wait
                 outer_html = original.get_attribute('outerHTML')
+                # todo: cut outer html by symbols limit
+                # todo: move symbols limit to configuration
+                # todo: log primarily the locator description not just outerHTML
+                #       first: refactor from locate function
+                #              to callable object with str
+                #       finally: consider DRYing all element builders' callables
+                #                with one class
+                #                accepting on object init
+                #                the locate-function and str-description ;)
                 raise WebDriverException(
                     msg=f'failed to find inside {outer_html} '
                         f'the element by: {selector}'
@@ -114,3 +146,5 @@ def visit(url):
 
 def element(selector: str):
     return Element(lambda: driver.find_element(By.CSS_SELECTOR, selector))
+
+# todo: finally: break down into modules by context
