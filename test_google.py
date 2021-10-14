@@ -11,6 +11,7 @@ browser.timeout = 2
 # todo: finally: configure logging all commands (e.g. to integrate with allure)
 
 query = browser.element('[name=q]')
+# todo: support XPath
 
 
 browser.visit('https://google.com')

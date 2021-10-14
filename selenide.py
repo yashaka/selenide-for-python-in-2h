@@ -21,7 +21,7 @@
 
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Union
 
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
@@ -40,8 +40,22 @@ def wait():
     return WebDriverWait(
         driver,
         timeout=timeout,
-        ignored_exceptions=(WebDriverException,)
+        ignored_exceptions=(WebDriverException, SelenideError)
     )
+
+
+class SelenideError(AssertionError):
+    def __init__(self, message: Union[str, Callable[[], str]]):
+        self._render_message: Callable[[], str] = (
+            (lambda: message) if isinstance(message, str) else message
+        )
+
+    @property
+    def msg(self):
+        return self.__str__()
+
+    def __str__(self):
+        return self._render_message()
 
 
 # todo: remove redundant driver,
@@ -132,9 +146,11 @@ class Element:
                 #                with one class
                 #                accepting on object init
                 #                the locate-function and str-description ;)
-                raise WebDriverException(
-                    msg=f'failed to find inside {outer_html} '
-                        f'the element by: {selector}'
+                raise SelenideError(
+                    lambda:
+                    f'\nFailed to find the element by: {selector}\n'
+                    f'inside: \n\n'
+                    + original.get_attribute('outerHTML')
                 )
 
         return Element(locate)
