@@ -30,7 +30,7 @@ query.set_value('yashaka selene').press_enter()
 
 # todo: refactor to: browser.all('#rso .g').first.element('a').click()
 #       where all -> Elements (object of a collection class)
-browser.element('#rso .g').element('a').click()# todo: add more commands, like:
+browser.element('#rso .g').element('a').click()  # todo: add more commands like:
 # (
 #     browser.all('#rso .g').by(match.text('github'))
 #     .should(match.size(2))
